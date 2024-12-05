@@ -41,3 +41,5 @@ log.txt
 runs/hindcasts/runs
 runs/forecasts/archive
 **/.DS_Store
+
+runs
