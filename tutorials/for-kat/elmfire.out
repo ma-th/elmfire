@@ -1,0 +1,124 @@
+ ELMFIRE 2024.0916
+ Reading &MISCELLANEOUS namelist group
+ Reading &INPUTS namelist group
+ Reading &OUTPUTS namelist group
+ Reading &COMPUTATIONAL_DOMAIN namelist group
+ Reading &TIME_CONTROL namelist group
+ Reading &SIMULATOR namelist group
+ Reading &WUI namelist group
+ Reading &CALIBRATION namelist group
+ Reading &SUPPRESSION namelist group
+ Reading &SPOTTING namelist group
+ Reading &SMOKE namelist group
+ Reading &MONTE_CARLO namelist group
+ Reading headers for fuels/topography and weather rasters
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/asp.tif ./scratch/asp.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/ws.tif ./scratch/ws.bsq
+Input file size is 70, 90
+0...10...20...30...40...50...60...70...80...90...100 - done.
+ Setting up shared memory, part 1
+ Reading weather, fuel, and topography rasters
+/bin/rm -f ./scratch/ws.bsq ./scratch/ws.hdr ./scratch/ws.prj ./scratch/ws.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/ws.tif ./scratch/ws.bsq
+Input file size is 70, 90
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/wd.bsq ./scratch/wd.hdr ./scratch/wd.prj ./scratch/wd.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/wd.tif ./scratch/wd.bsq
+Input file size is 70, 90
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/m1.bsq ./scratch/m1.hdr ./scratch/m1.prj ./scratch/m1.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/m1.tif ./scratch/m1.bsq
+Input file size is 70, 90
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/m10.bsq ./scratch/m10.hdr ./scratch/m10.prj ./scratch/m10.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/m10.tif ./scratch/m10.bsq
+Input file size is 70, 90
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/m100.bsq ./scratch/m100.hdr ./scratch/m100.prj ./scratch/m100.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/m100.tif ./scratch/m100.bsq
+Input file size is 70, 90
+0...10...20...30...40...50...60...70...80...90...100 - done.
+ Reading fuel and topography rasters
+/bin/rm -f ./scratch/asp.bsq ./scratch/asp.hdr ./scratch/asp.prj ./scratch/asp.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/asp.tif ./scratch/asp.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/cbh.bsq ./scratch/cbh.hdr ./scratch/cbh.prj ./scratch/cbh.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/cbh.tif ./scratch/cbh.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/cbd.bsq ./scratch/cbd.hdr ./scratch/cbd.prj ./scratch/cbd.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/cbd.tif ./scratch/cbd.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/cc.bsq ./scratch/cc.hdr ./scratch/cc.prj ./scratch/cc.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/cc.tif ./scratch/cc.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/ch.bsq ./scratch/ch.hdr ./scratch/ch.prj ./scratch/ch.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/ch.tif ./scratch/ch.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/dem.bsq ./scratch/dem.hdr ./scratch/dem.prj ./scratch/dem.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/dem.tif ./scratch/dem.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/fbfm40b.bsq ./scratch/fbfm40b.hdr ./scratch/fbfm40b.prj ./scratch/fbfm40b.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/fbfm40b.tif ./scratch/fbfm40b.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/slp.bsq ./scratch/slp.hdr ./scratch/slp.prj ./scratch/slp.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/slp.tif ./scratch/slp.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/adj.bsq ./scratch/adj.hdr ./scratch/adj.prj ./scratch/adj.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/adj.tif ./scratch/adj.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/phi.bsq ./scratch/phi.hdr ./scratch/phi.prj ./scratch/phi.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/phi.tif ./scratch/phi.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/bldg_area_avg_m.bsq ./scratch/bldg_area_avg_m.hdr ./scratch/bldg_area_avg_m.prj ./scratch/bldg_area_avg_m.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/bldg_area_avg_m.tif ./scratch/bldg_area_avg_m.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/bldg_separation_distance.bsq ./scratch/bldg_separation_distance.hdr ./scratch/bldg_separation_distance.prj ./scratch/bldg_separation_distance.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/bldg_separation_distance.tif ./scratch/bldg_separation_distance.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/bldg_nonburnable_frac.bsq ./scratch/bldg_nonburnable_frac.hdr ./scratch/bldg_nonburnable_frac.prj ./scratch/bldg_nonburnable_frac.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/bldg_nonburnable_frac.tif ./scratch/bldg_nonburnable_frac.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/bldg_footprint_frac.bsq ./scratch/bldg_footprint_frac.hdr ./scratch/bldg_footprint_frac.prj ./scratch/bldg_footprint_frac.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/bldg_footprint_frac.tif ./scratch/bldg_footprint_frac.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/bldg_fuel_model.bsq ./scratch/bldg_fuel_model.hdr ./scratch/bldg_fuel_model.prj ./scratch/bldg_fuel_model.bsq.aux.xml
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs-new-AOI/bldg_fuel_model.tif ./scratch/bldg_fuel_model.bsq
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+ Allocating additional rasters
+ Setting up shared memory, part 2
+ Setting up statistics arrays
+ ELMFIRE is running each ensemble member
+/usr/bin/gdal_translate -ot Float32 -co "COMPRESS=DEFLATE" -co "ZLEVEL=9" -a_srs "+proj=lcc +lat_0=35.5 +lon_0=-122.7 +lat_1=35.5 +lat_2=41.5 +x_0=0 +y_0=0 +R=6371200 +units=m +no_defs" ./scratch/time_of_arrival_0000001_0002000.bil ./outputs/time_of_arrival_0000001_0002000.tif
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/time_of_arrival_0000001_0002000.bil
+/bin/rm -f ./scratch/time_of_arrival_0000001_0002000.hdr
+/usr/bin/gdal_translate -ot Float32 -co "COMPRESS=DEFLATE" -co "ZLEVEL=9" -a_srs "+proj=lcc +lat_0=35.5 +lon_0=-122.7 +lat_1=35.5 +lat_2=41.5 +x_0=0 +y_0=0 +R=6371200 +units=m +no_defs" ./scratch/hrr_transient_0000001_0002000.bil ./outputs/hrr_transient_0000001_0002000.tif
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/hrr_transient_0000001_0002000.bil
+/bin/rm -f ./scratch/hrr_transient_0000001_0002000.hdr
+/usr/bin/gdal_translate -ot Float32 -co "COMPRESS=DEFLATE" -co "ZLEVEL=9" -a_srs "+proj=lcc +lat_0=35.5 +lon_0=-122.7 +lat_1=35.5 +lat_2=41.5 +x_0=0 +y_0=0 +R=6371200 +units=m +no_defs" ./scratch/ember_flux_0000001_0002000.bil ./outputs/ember_flux_0000001_0002000.tif
+Input file size is 700, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/bin/rm -f ./scratch/ember_flux_0000001_0002000.bil
+/bin/rm -f ./scratch/ember_flux_0000001_0002000.hdr
+Meteorology band      1: Case #       1 complete.  Fire area:      1.1 acres.
+ End of simulation reached successfully. Shutting down.
