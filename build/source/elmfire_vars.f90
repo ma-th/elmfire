@@ -373,6 +373,7 @@ TYPE :: BUILDING_FUEL_MODEL_TABLE_TYPE
    REAL :: FUEL_LOAD
    REAL :: HRRPUA_PEAK
    REAL :: FTP_CRIT
+   REAL :: Q_CRIT
    REAL :: ABSORPTIVITY
    REAL :: HEIGHT
    REAL :: NONBURNABLE_FRAC
@@ -567,6 +568,7 @@ TYPE NODE
    REAL    :: ABSOLUTE_U         = 0.
    REAL    :: TOTAL_DFC_RECEIVED = 0.
    REAL    :: TOTAL_RAD_RECEIVED = 0.
+   REAL    :: T_BLDG_IGN         = 0.
 
 ! UMD spotting parameters
    REAL    :: T_START_SPOTTING = -1. 
