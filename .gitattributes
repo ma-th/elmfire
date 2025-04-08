@@ -1,0 +1,9 @@
+*.sh text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.f90 text eol=lf
+*.data text eol=lf

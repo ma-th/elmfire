@@ -21,10 +21,13 @@ LU=3939
 FN = TRIM(OUTPUTS_DIRECTORY) // 'timings_' // TRIM(PROCNAME) // '.csv'  
 OPEN(LU,FILE=TRIM(FN),FORM='FORMATTED',STATUS='REPLACE',IOSTAT=IOS)
 WRITE(LU,100) '#,', (IR, IR=0, NPROC_HOST-1)
-DO I = 1, 62
+DO I = 1, 86
    WRITE(LU,300) I, (TIMINGS(IR+1,I), IR=0, NPROC_HOST-1)
 ENDDO
 CLOSE(LU)
+
+OPEN(20250202, FILE="TIME_CHECK.csv", STATUS='UNKNOWN', POSITION='APPEND', ACTION='WRITE')
+WRITE(20250202,*) (TIMINGS(IR+1,1), IR=0, NPROC_HOST-1), STATS_SURFACE_FIRE_AREA(1)
 
 100 FORMAT (A,128(I3,','))
 300 FORMAT (I3,',',128(F11.5,','))
@@ -294,7 +297,7 @@ DO IROW = 1, FINE%NROWS
 ENDDO
 
 ICOL_COARSE(:) = MIN(MAX(CEILING( (X(:) - COARSE%XLLCORNER) / COARSE%CELLSIZE),1),COARSE%NCOLS)
-IROW_COARSE(:) = MIN(MAX(CEILING( (Y(:) - COARSE%YLLCORNER) / COARSE%CELLSIZE),1),COARSE%NROWS)
+IROW_COARSE(:) = MIN(MAX(CEILING( (Y(:) - COARSE%YLLCORNER) / COARSE%CELLSIZE),1),COARSE%NCOLS)
 
 DEALLOCATE(X)
 DEALLOCATE(Y)
@@ -1076,7 +1079,7 @@ DL2%TAIL%IY         =  IY
 DL2%TAIL%TIME_ADDED =  T
 
 DL2%TAIL%IFBFM   =  FBFM%I2(IX,IY,1)
-IF (USE_BLDG_SPREAD_MODEL) DL2%TAIL%IBLDGFM =  BLDG_FUEL_MODEL%I2(IX,IY,1)
+DL2%TAIL%IBLDGFM =  BLDG_FUEL_MODEL%I2(IX,IY,1)
 DL2%TAIL%ADJ     =  ADJ%R4(IX,IY,1)
 DL2%TAIL%TANSLP2 =  TANSLP2(MAX(MIN(NINT(SLP%R4(IX,IY,1)),90),0))
 
@@ -1098,6 +1101,7 @@ DL2%NODE_POINTERS(N)%PTR => DL2%TAIL
 ! *****************************************************************************   
 END SUBROUTINE APPEND
 ! *****************************************************************************
+
 
 ! *****************************************************************************
 SUBROUTINE APPEND_TO_DYNAMIC_ARRAY(IX, IY, N_ROWS, DYNAMIC_ARRAY)
@@ -1134,6 +1138,8 @@ SUBROUTINE APPEND_TO_DYNAMIC_ARRAY(IX, IY, N_ROWS, DYNAMIC_ARRAY)
 ! *****************************************************************************
 END SUBROUTINE APPEND_TO_DYNAMIC_ARRAY
 ! *****************************************************************************
+
+
 
 ! *****************************************************************************
 ELEMENTAL SUBROUTINE INIT(DL2, IX, IY, T)

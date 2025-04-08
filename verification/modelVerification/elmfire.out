@@ -1,0 +1,68 @@
+ ELMFIRE 2025.0302
+ Reading &MISCELLANEOUS namelist group
+ Reading &INPUTS namelist group
+ Reading &OUTPUTS namelist group
+ Reading &COMPUTATIONAL_DOMAIN namelist group
+ Reading &TIME_CONTROL namelist group
+ Reading &SIMULATOR namelist group
+ Reading &WUI namelist group
+ Reading &CALIBRATION namelist group
+ Reading &SUPPRESSION namelist group
+ Reading &SPOTTING namelist group
+ Reading &SMOKE namelist group
+ Reading &MONTE_CARLO namelist group
+ Reading headers for fuels/topography and weather rasters
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/asp.tif ./scratch/asp.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/ws.tif ./scratch/ws.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+ Setting up shared memory, part 1
+ Reading weather, fuel, and topography rasters
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/ws.tif ./scratch/ws.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/wd.tif ./scratch/wd.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/m1.tif ./scratch/m1.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/m10.tif ./scratch/m10.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/m100.tif ./scratch/m100.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+ Reading fuel and topography rasters
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/asp.tif ./scratch/asp.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/cbh.tif ./scratch/cbh.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/cbd.tif ./scratch/cbd.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/cc.tif ./scratch/cc.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/ch.tif ./scratch/ch.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/dem.tif ./scratch/dem.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/fbfm40.tif ./scratch/fbfm40.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/slp.tif ./scratch/slp.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/adj.tif ./scratch/adj.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
+/usr/bin/gdal_translate -of ENVI -co "INTERLEAVE=BSQ" ./inputs/phi.tif ./scratch/phi.bsq
+Input file size is 600, 600
+0...10...20...30...40...50...60...70...80...90...100 - done.
