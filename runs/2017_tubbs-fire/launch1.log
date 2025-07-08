@@ -1,0 +1,61 @@
+nohup: ignoring input
++ '
+#SBATCH --account=co_gollner
+#SBATCH --partition=savio4_htc
+#SBATCH --qos=gollner_htc4_normal
+#SBATCH --job-name=tubbs_54-test
+#SBATCH --output=./logs/output_%A_%a.log         
+#SBATCH --error=./logs/error_%A_%a.log           
+#SBATCH --time=0-20:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=56
+'
+./04-launch_savio.sh: line 12: 
+#SBATCH --account=co_gollner
+#SBATCH --partition=savio4_htc
+#SBATCH --qos=gollner_htc4_normal
+#SBATCH --job-name=tubbs_54-test
+#SBATCH --output=./logs/output_%A_%a.log         
+#SBATCH --error=./logs/error_%A_%a.log           
+#SBATCH --time=0-20:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=56
+: No such file or directory
++ RUN_FILE=01-run.sh
++ INPUTS=inputs
++ DATA_FILES=elmfire-const.data
++ RUN_IDS=62-C
++ ELMFIRE_VER=2025.0526
++ data_file=elmfire-const.data
++ run_id=62-C
++ WORK_DIR=./run_62-C
++ mkdir -p ./run_62-C
++ cp 01-run.sh ./run_62-C/
++ cp -r inputs ./run_62-C/
++ cp elmfire-const.data ./run_62-C/
++ cp -r misc ./run_62-C/
++ cp raster_percentile_p.py ./run_62-C/
++ cp 99-post_funcs.sh ./run_62-C/
+++ realpath ./04-launch_savio.sh
++ SCRIPT_PATH=/home/mariat/elmfire/runs/2017_tubbs-fire/04-launch_savio.sh
++ cp /home/mariat/elmfire/runs/2017_tubbs-fire/04-launch_savio.sh /
+cp: cannot create regular file '/04-launch_savio.sh': Permission denied
++ echo 'Contents of ./run_62-C:'
+Contents of ./run_62-C:
++ ls -l ./run_62-C
+total 32
+-rwxr-xr-x 1 mariat mariat 2311 Jul  8 00:47 01-run.sh
+-rwxr-xr-x 1 mariat mariat 2829 Jul  8 00:47 99-post_funcs.sh
+-rwxr-xr-x 1 mariat mariat 7922 Jul  8 00:47 elmfire-const.data
+drwxr-xr-x 2 mariat mariat 4096 Jul  8 00:47 inputs
+drwxr-xr-x 2 mariat mariat 4096 Jul  8 00:47 misc
+-rwxr-xr-x 1 mariat mariat 8164 Jul  8 00:47 raster_percentile_p.py
++ echo 'Script: 01-run.sh, Data File: elmfire-const.data, Run ID: 62-C'
+Script: 01-run.sh, Data File: elmfire-const.data, Run ID: 62-C
++ cd ./run_62-C
++ chmod +x 01-run.sh
++ ./01-run.sh elmfire-const.data 62-C 2025.0526
+2025-07-08 00:47:31 - Start new episode
+/home/mariat/elmfire/build/build_PATCH3_MASTER_DONT_MODIFY/linux/bin/elmfire_2025.0526
+SLURM_NTASKS: 
+2025-07-08 00:47:31 - Launching ELMFIRE
