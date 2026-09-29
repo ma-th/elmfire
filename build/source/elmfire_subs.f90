@@ -115,12 +115,18 @@ CALL MPI_BCAST(MLH%R4 , WEATHER_COUNT, MPI_REAL, 0, MPI_COMM_HOST_IRANK0, IERR)
 CALL MPI_BCAST(MLW%R4 , WEATHER_COUNT, MPI_REAL, 0, MPI_COMM_HOST_IRANK0, IERR)
 CALL MPI_BCAST(MFOL%R4, WEATHER_COUNT, MPI_REAL, 0, MPI_COMM_HOST_IRANK0, IERR)
 
+IF (SURFACE_MODEL_CFFDRS .AND. USE_BUI_RASTER) THEN
+   CALL MPI_BCAST(BUI%R4, WEATHER_COUNT, MPI_REAL, 0, MPI_COMM_HOST_IRANK0, IERR)
+ENDIF
+
 IF (USE_ERC) THEN
    CALL MPI_BCAST(ERC%R4, WEATHER_COUNT, MPI_REAL, 0, MPI_COMM_HOST_IRANK0, IERR)
    CALL MPI_BCAST(IGNFAC%R4, WEATHER_COUNT, MPI_REAL, 0, MPI_COMM_HOST_IRANK0, IERR)
 ENDIF
 
+! *****************************************************************************
 END SUBROUTINE BCAST_WEATHER
+! *****************************************************************************
 
 ! *****************************************************************************
 SUBROUTINE BCAST_FUEL_TOPOGRAPHY
@@ -633,6 +639,14 @@ SELECT CASE (IQUANTITY)
          C => C%NEXT
       ENDDO
 
+   CASE (8)
+      DO I = 1, L%NUM_NODES
+         ICOL = WX_ICOL_FROM_ANALYSIS_IX(C%IX)
+         IROW = WX_IROW_FROM_ANALYSIS_IY(C%IY)
+         C%BUI = MAX(LO(ICOL,IROW), 0.0)
+         C => C%NEXT
+      ENDDO
+
 END SELECT
 
 ! *****************************************************************************
@@ -689,7 +703,9 @@ DO I = 1, L%NUM_NODES
          C%WS20_INTERP = MAX(PNOW + PERTURB_WS, 0.0)
          C%WS20_NOW = C%WS20_INTERP
          C%WSMF = C%WS20_NOW * MAX((WAF%R4(C%IX,C%IY,1) + PERTURB_WAF),0.) * CONVERSION_FACTOR
-      END SELECT
+      CASE (8)
+         C%BUI = MAX(PNOW, 0.0)
+   END SELECT
    
    C => C%NEXT
 
@@ -1113,6 +1129,8 @@ SELECT CASE (IQUANTITY)
       C%WS20_INTERP = MAX(C%WS20_INTERP + PERTURB_WS, 0.0)
       C%WS20_NOW = C%WS20_INTERP
       C%WSMF = C%WS20_NOW * MAX((WAF%R4(C%IX,C%IY,1) + PERTURB_WAF),0.) * CONVERSION_FACTOR
+   CASE (8)
+      C%BUI = MAX(LO(ICOL,IROW),0.0)
 
 END SELECT
 
@@ -1168,6 +1186,8 @@ SELECT CASE (IQUANTITY)
       C%WS20_INTERP = MAX(PNOW + PERTURB_WS, 0.0)
       C%WS20_NOW = C%WS20_INTERP
       C%WSMF = C%WS20_NOW * MAX((WAF%R4(C%IX,C%IY,1) + PERTURB_WAF),0.) * CONVERSION_FACTOR
+   CASE (8)
+      C%BUI = MAX(PNOW, 0.0)
 END SELECT
 
 ! *****************************************************************************
@@ -1559,6 +1579,9 @@ IF (NPROC .GT. 1) THEN
    CALL MPI_WIN_FREE(WIN_M1           )
    CALL MPI_WIN_FREE(WIN_M10          )
    CALL MPI_WIN_FREE(WIN_M100         )
+   IF (SURFACE_MODEL_CFFDRS .AND. USE_BUI_RASTER) THEN
+      CALL MPI_WIN_FREE(WIN_BUI)
+   ENDIF
    IF (USE_ERC) THEN
       CALL MPI_WIN_FREE(WIN_ERC       )
       CALL MPI_WIN_FREE(WIN_IGNFAC    )
@@ -1795,7 +1818,7 @@ select case (FUEL)
       PC = mod(FUEL, 100)/100.0
       out = PC * SFC(2_2,FFMC,BUI) + (1 - PC) * SFC(11_2,FFMC,BUI)
    case(31,32,33)
-      out = 0.35
+      out = MAX(FUEL_MODEL_TABLE_FBP(FUEL)%GFL, 0.0)
    case (21)
       out = max(0.0,4*(1-exp(-0.034*BUI)))+4.0*(1-exp(-0.025*BUI))
    case (22)
@@ -1811,7 +1834,7 @@ END FUNCTION SFC
 ! *****************************************************************************
 
 ! *****************************************************************************
-REAL FUNCTION BUI(day_of_weather, month_of_weather)
+REAL FUNCTION CALC_DAILY_BUI(day_of_weather, month_of_weather)
 ! *****************************************************************************
 ! Returns the Canadian FWI Buildup Index for the given day/month by advancing
 ! the Drought Code and Duff Moisture Code from temperature, humidity, and
@@ -1856,9 +1879,9 @@ DC_prev = DC
 
 ! -------------- BUILD-UP INDEX ---------------------
 
-BUI = 0.8*DMC*DC/(DMC+0.4*DC)
+CALC_DAILY_BUI = 0.8*DMC*DC/(DMC+0.4*DC)
 ! *****************************************************************************
-END FUNCTION BUI
+END FUNCTION CALC_DAILY_BUI
 ! *****************************************************************************
 
 ! *****************************************************************************

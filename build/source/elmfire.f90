@@ -171,13 +171,14 @@ IF (TRIM(MISCELLANEOUS_INPUTS_DIRECTORY) .EQ. 'null'                  ) MISCELLA
 CALL MPI_BARRIER(MPI_COMM_WORLD, IERR)
 CALL READ_FUEL_MODEL_TABLE
 
-if (SURFACE_MODEL_CFFDRS) then
+!if (SURFACE_MODEL_CFFDRS) then
+IF (SURFACE_MODEL_CFFDRS .AND. .NOT. USE_BUI_RASTER) THEN
    CALL READ_WEATHER
    DC_prev = START_DC
    DMC_prev = START_DMC
    daily_bui(1) = 0.8*START_DMC*START_DC/(START_DMC+0.4*START_DC)
    DO I = 2 , size(daily_bui)
-      daily_bui(I) = BUI(I-1, MOD( weather_day(I-1) / 100, 100 ))
+      daily_bui(I) = CALC_DAILY_BUI(I-1, MOD( weather_day(I-1) / 100, 100 ))
    enddo
 endif 
 
@@ -577,26 +578,37 @@ IF (MODE .NE. 1) THEN
                C%FLIN_CANOPY    = 0.
                C%CRITICAL_FLIN  = 9E9
                C%CROWN_FIRE     = 0
-               if (SURFACE_MODEL_CFFDRS) then
-                  C%C = 100*min(1.0,max(0.0,1.33-1.11*MLH%R4(IX,IY,1)))
-                  C%PC = mod(C%IFBFM,100) / 100.0
+               IF (SURFACE_MODEL_CFFDRS) THEN
+                  C%PC = MOD(C%IFBFM,100) / 100.0
                   C%PDF = C%PC
-               endif
+                  IF (USE_BUI_RASTER) THEN
+                     C%BUI = MAX(BUI%R4(ICOL, IROW, IWX_BAND), 0.0)
+                  ENDIF
+               ENDIF
                C => C%NEXT
             ENDDO
 
-            if (SURFACE_MODEL_ROTHERMEL) then
+            IF (SURFACE_MODEL_ROTHERMEL) THEN
                CALL ROTHERMEL_SURFACE_SPREAD_RATE(LIST_FIRE_POTENTIAL, DUMMY_NODE)
-            else if (SURFACE_MODEL_CFFDRS) then
-               CALL CFFDRS_SPREAD_RATE(LIST_FIRE_POTENTIAL, DUMMY_NODE, daily_bui(ceiling((12 + mod(HOUR_OF_YEAR, 24) + IWX_BAND + IWX_MEM_BAND - 2)/24.0)))
+            ELSE IF (SURFACE_MODEL_CFFDRS) THEN
+               IF (USE_BUI_RASTER) THEN
+                  CALL CFFDRS_SPREAD_RATE(LIST_FIRE_POTENTIAL, DUMMY_NODE)
+               ELSE
+                  CALL CFFDRS_SPREAD_RATE(LIST_FIRE_POTENTIAL, DUMMY_NODE, &
+                     daily_bui(CEILING((12 + MOD(HOUR_OF_YEAR, 24) + IWX_BAND + IWX_MEM_BAND - 2) / 24.0)))
+               ENDIF
             ENDIF
 
             C => LIST_FIRE_POTENTIAL%HEAD
             DO I = 1, LIST_FIRE_POTENTIAL%NUM_NODES
-               C%VELOCITY =  C%VELOCITY_DMS_SURFACE
+               IF (SURFACE_MODEL_CFFDRS) THEN
+                  C%VELOCITY = C%VELOCITY_DMS
+               ELSE
+                  C%VELOCITY = C%VELOCITY_DMS_SURFACE
+               ENDIF
                C%FLIN_SURFACE = C%FLIN_DMS_SURFACE
                C => C%NEXT
-            enddo
+            ENDDO
 
             CALL UPDATE_LOCAL_SPREAD_PROPERTIES(LIST_FIRE_POTENTIAL, DUMMY_NODE)
 
