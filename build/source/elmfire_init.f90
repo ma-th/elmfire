@@ -69,11 +69,14 @@ IF (SURFACE_MODEL_CFFDRS) THEN
       GOOD_INPUTS = GOOD_INPUTS .AND. &
          CHECK_FILEPATH_IS_SET(DAILY_WEATHER_FILENAME, "DAILY_WEATHER_FILENAME")
    ENDIF
-   ! The ELMFIRE FBP implementation takes spatial CBH from the landscape/raster
-   ! for crown initiation.  CBD is not an FBP input and is not required here.
-   IF (.NOT. USE_LANDSCAPE_FILE) THEN
-      GOOD_INPUTS = GOOD_INPUTS .AND. &
-         CHECK_FILEPATH_IS_SET(CBH_FILENAME, "CBH_FILENAME")
+   ! For CFFDRS/FBP, an explicit spatial CBH raster is optional.  When neither
+   ! LANDSCAPE_FILENAME nor CBH_FILENAME is supplied, READ_FUELS_AND_TOPOGRAPHY
+   ! populates CBH from the FBP fuel-model table.  Keep the legacy/verification
+   ! fallback valid, but make the fallback visible so an accidental omission of
+   ! a site-specific CBH raster is not silent.
+   IF (.NOT. USE_LANDSCAPE_FILE .AND. LEN_TRIM(CBH_FILENAME) .EQ. 0) THEN
+      IF (IRANK_WORLD .EQ. 0) WRITE(*,*) &
+         '[WARNING] CFFDRS CBH_FILENAME not set; using fuel-model-table CBH values'
    ENDIF
 ELSE IF (.NOT. USE_LANDSCAPE_FILE) THEN
    GOOD_INPUTS = GOOD_INPUTS .AND. &

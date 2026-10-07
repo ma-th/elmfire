@@ -46,7 +46,7 @@ CHARACTER(7) :: SEVEN_IENS
 CHARACTER(20) :: ENS_TAG
 ! VERSIONSTRING is kept in sync with the repo-root VERSION file by the build
 ! scripts (make_gnu.sh / make_intel.sh); edit VERSION, not this literal.
-CHARACTER(60) :: VERSIONSTRING='ELMFIRE 1.12'
+CHARACTER(60) :: VERSIONSTRING='ELMFIRE 1.1'
 CHARACTER(400) :: FN, MESSAGESTR
 
 TYPE (RASTER_TYPE), POINTER :: R
