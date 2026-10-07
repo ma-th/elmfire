@@ -176,6 +176,10 @@ DO I = 1, NUM_NODES
    C%CROWN_FIRE = 0
    C%CFB = 0.0
    C%CFC = 0.0
+   C%TFC = 0.0
+   C%RSI_FBP = 0.0
+   C%BE_FBP = 0.0
+   C%RSO_FBP = 0.0
    C%FLIN_CANOPY = 0.0
    C%PHIW_CROWN = 0.0
    C%VELOCITY_DMS = 0.0
@@ -209,9 +213,17 @@ DO I = 1, NUM_NODES
       ENDIF
       BUI_LOCAL = MAX(BUI_FALLBACK,0.0)
    ENDIF
+   C%BUI = BUI_LOCAL
 
-   ! Grass curing from the current interpolated node live-herbaceous moisture.
-   C%C = 100.0 * MIN(1.0,MAX(0.0,1.33 - 1.11*C%MLH))
+   ! Degree of grass curing, percent.  Prefer the explicit CWFIS/FBP GCF raster;
+   ! retain the former MLH-derived relationship only as a compatibility fallback for older inputs.
+   IF (USE_GCF_RASTER) THEN
+      C%C = MAX(0.0,MIN(100.0,C%GCF))
+   ELSE
+      C%C = 100.0 * MIN(1.0,MAX(0.0,1.33 - 1.11*C%MLH))
+   ENDIF
+   ! Keep the diagnostic node field equal to the curing percent actually used.
+   C%GCF = C%C
 
    ! Mixedwood fractions encoded in the ELMFIRE FBP fuel-model number.
    C%PC = MOD(C%IFBFM,100) / 100.0
@@ -320,6 +332,7 @@ DO I = 1, NUM_NODES
    ! --------------------------------------------------------------------------
 
    RSI_c = RSI(C%IFBFM,C%ISI,CF)
+   C%RSI_FBP = RSI_c
 
    ! Buildup effect.
    IF (BUI_LOCAL .LE. 0.0) THEN
@@ -331,6 +344,7 @@ DO I = 1, NUM_NODES
            (1.0/BUI_LOCAL - 1.0/FUEL_MODEL_TABLE_FBP(C%IFBFM)%BUI0))
       BE = MAX(0.0,MIN(BE,FUEL_MODEL_TABLE_FBP(C%IFBFM)%BE_max))
    ENDIF
+   C%BE_FBP = BE
 
    ! Surface head ROS, m/min before ELMFIRE operational adjustment factors.
    ROS = RSI_c * BE
@@ -414,6 +428,8 @@ REAL :: RSS, RSO, RSC, FME, ROS_FINAL
 C%CROWN_FIRE = 0
 C%CFB = 0.0
 C%CFC = 0.0
+C%TFC = C%SFC
+C%RSO_FBP = 0.0
 C%FLIN_CANOPY = 0.0
 C%PHIW_CROWN = 0.0
 
@@ -430,13 +446,20 @@ CALL CROWN_CRITICAL_FLIN(C)
 ! Surface-only head-fire intensity before crown involvement.
 C%FLIN_DMS_SURFACE = 300.0 * C%SFC * RSS
 
+! RSO is an FBP diagnostic/output, not merely a crown-fire gate.  Calculate it
+! whenever SFC is positive, even when the current head fire does not initiate crowning.
+IF (C%SFC .GT. 1.0E-6) THEN
+   RSO = C%CRITICAL_FLIN / (300.0*C%SFC)
+   C%RSO_FBP = RSO
+ELSE
+   RSO = 0.0
+   C%RSO_FBP = 0.0
+ENDIF
+
 IF (CROWN_FIRE_MODEL .LE. 0) RETURN
 IF (C%SFC .LE. 1.0E-6) RETURN
 IF (FUEL_MODEL_TABLE_FBP(C%IFBFM)%CFL .LE. 0.0) RETURN
 IF (CBH%R4(C%IX,C%IY,1) .LE. 0.0) RETURN
-IF (C%FLIN_DMS_SURFACE .LT. C%CRITICAL_FLIN) RETURN
-
-RSO = C%CRITICAL_FLIN / (300.0*C%SFC)
 IF (RSS .LE. RSO) RETURN
 
 C%CFB = MIN(1.0,MAX(0.0,1.0-EXP(-0.23*(RSS-RSO))))
@@ -458,6 +481,7 @@ ELSE IF (C%IFBFM .EQ. 70 .OR. C%IFBFM .EQ. 80 .OR. C%IFBFM .EQ. 90 .OR. &
 ELSE
    C%CFC = FUEL_MODEL_TABLE_FBP(C%IFBFM)%CFL*C%CFB
 ENDIF
+C%TFC = C%SFC + C%CFC
 
 IF (C%IFBFM .EQ. 6) THEN
    IF (C%CFC .LE. 0.0) THEN
@@ -594,17 +618,31 @@ IX = C%IX
 IY = C%IY
 
 IF (C%CRITICAL_FLIN .GT. 1E9) THEN
-   C%HPUA_CANOPY = CBD%R4(IX,IY,1) * MAX(CH%R4(IX,IY,1) - CBH%R4(IX,IY,1),0.) * 12000. !kJ/m2
-   IF (CBH%R4(IX,IY,1) .GE. 0.) THEN
-      IF (SURFACE_MODEL_CFFDRS) THEN
+   IF (SURFACE_MODEL_CFFDRS) THEN
+      ! FBP crown initiation uses CBH and FMC only.  Do not touch CBD here:
+      ! CFFDRS does not require a canopy-bulk-density raster.  Fuels with zero
+      ! CFL are non-crowning in the FBP reference and therefore have CSFI=0.
+      C%HPUA_CANOPY = 0.0
+      IF (FUEL_MODEL_TABLE_FBP(C%IFBFM)%CFL .LE. 0.0) THEN
+         C%CRITICAL_FLIN = 0.0
+      ELSE IF (CBH%R4(IX,IY,1) .GE. 0.0) THEN
          FMCTERM = 460.0 + 25.9*C%FMC
+         CBH_EFF = MAX(CBH%R4(IX,IY,1) + PERTURB_CBH, 0.0)
+         C%CRITICAL_FLIN = (0.01 * CBH_EFF * FMCTERM) ** 1.5
       ELSE
-         FMCTERM = 460.0 + 26.0*C%FMC
+         C%CRITICAL_FLIN = 9E9
       ENDIF
-      CBH_EFF = MAX(CBH%R4(IX,IY,1) + PERTURB_CBH, 0.1)
-      C%CRITICAL_FLIN = (0.01 * CBH_EFF * FMCTERM) ** 1.5
    ELSE
-      C%CRITICAL_FLIN = 9E9
+      ! Preserve the existing Rothermel crown-fire formulation.
+      C%HPUA_CANOPY = CBD%R4(IX,IY,1) * &
+                      MAX(CH%R4(IX,IY,1) - CBH%R4(IX,IY,1),0.) * 12000. !kJ/m2
+      IF (CBH%R4(IX,IY,1) .GE. 0.0) THEN
+         FMCTERM = 460.0 + 26.0*C%FMC
+         CBH_EFF = MAX(CBH%R4(IX,IY,1) + PERTURB_CBH, 0.1)
+         C%CRITICAL_FLIN = (0.01 * CBH_EFF * FMCTERM) ** 1.5
+      ELSE
+         C%CRITICAL_FLIN = 9E9
+      ENDIF
    ENDIF
 ENDIF
 
