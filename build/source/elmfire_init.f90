@@ -71,7 +71,7 @@ IF (SURFACE_MODEL_CFFDRS) THEN
    ENDIF
    ! For CFFDRS/FBP, an explicit spatial CBH raster is optional.  When neither
    ! LANDSCAPE_FILENAME nor CBH_FILENAME is supplied, READ_FUELS_AND_TOPOGRAPHY
-   ! populates CBH from the FBP fuel-model table.  Keep the legacy/verification
+   ! populates CBH from the FBP fuel-model table.  Keep that legacy/verification
    ! fallback valid, but make the fallback visible so an accidental omission of
    ! a site-specific CBH raster is not silent.
    IF (.NOT. USE_LANDSCAPE_FILE .AND. LEN_TRIM(CBH_FILENAME) .EQ. 0) THEN
@@ -209,12 +209,19 @@ IF (ENABLE_EXTENDED_ATTACK .AND. EXTENDED_ATTACK_MODEL .EQ. 1) THEN
 ENDIF
 
 ! new suppression model
-IF (SURFACE_MODEL_ROTHERMEL .OR. SURFACE_MODEL_CFFDRS) THEN
-   GOOD_INPUTS = GOOD_INPUTS .AND. CHECK_RASTER_DIMS(ASP,CBH,"Canopy Base Height")
-ENDIF
 IF (SURFACE_MODEL_ROTHERMEL) THEN
+   GOOD_INPUTS = GOOD_INPUTS .AND. CHECK_RASTER_DIMS(ASP, CBH, "Canopy Base Height")
    GOOD_INPUTS = GOOD_INPUTS .AND. CHECK_RASTER_DIMS(ASP, CBD, "Density")
-ENDIF 
+ELSE IF (SURFACE_MODEL_CFFDRS) THEN
+   ! When CFFDRS/FBP uses an explicit spatial CBH source, validate its grid
+   ! against the analysis raster.  If neither a landscape nor CBH raster is
+   ! supplied, CBH is populated internally from the FBP fuel-model table on the
+   ! analysis grid, so there is no independent CBH raster header to validate.
+   IF (USE_LANDSCAPE_FILE .OR. LEN_TRIM(CBH_FILENAME) .GT. 0) THEN
+      GOOD_INPUTS = GOOD_INPUTS .AND. &
+         CHECK_RASTER_DIMS(ASP, CBH, "Canopy Base Height")
+   ENDIF
+ENDIF
 
 GOOD_INPUTS = GOOD_INPUTS .and. CHECK_RASTER_DIMS(WS, WD, "Wind Direction")
 GOOD_INPUTS = GOOD_INPUTS .and. CHECK_RASTER_DIMS(WS, M1, "M1")

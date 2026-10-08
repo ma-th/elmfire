@@ -304,7 +304,15 @@ ENDIF
 
 IF (IRANK_WORLD .EQ. 0) THEN
    CALL CHECK_INPUTS(GOOD_INPUTS)
-   IF (.NOT. GOOD_INPUTS) CALL SHUTDOWN()
+ENDIF
+! CHECK_INPUTS is evaluated once on rank 0, then the result is distributed so
+! every rank follows the same fatal-error path.  SHUTDOWN contains collective
+! MPI cleanup/finalization calls and therefore must not be entered by rank 0
+! alone.  STOP prevents execution from continuing after MPI_FINALIZE.
+CALL MPI_BCAST(GOOD_INPUTS, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, IERR)
+IF (.NOT. GOOD_INPUTS) THEN
+   CALL SHUTDOWN()
+   STOP 1
 ENDIF
 
 !-----------------------------------------------------------------------------------------------------------------
@@ -470,8 +478,8 @@ IF (MODE .NE. 1) THEN
    CALL ALLOCATE_EMPTY_RASTER(CRITICAL_FLIN_TO_DUMP  , R%NCOLS, R%NROWS, 1, R%XLLCORNER, R%YLLCORNER, R%CELLSIZE, R%NODATA_VALUE, 'FLOAT     ')
    CALL ALLOCATE_EMPTY_RASTER(DEBUG_CFFDRS_TO_DUMP  , R%NCOLS, R%NROWS, 1, R%XLLCORNER, R%YLLCORNER, R%CELLSIZE, R%NODATA_VALUE, 'FLOAT     ')
    CALL ALLOCATE_EMPTY_RASTER(REACTION_INTENSITY_TO_DUMP  , R%NCOLS, R%NROWS, 1, R%XLLCORNER, R%YLLCORNER, R%CELLSIZE, R%NODATA_VALUE, 'FLOAT     ')
-   ! Detailed CFFDRS/FBP diagnostics are only needed for explicit debug/regression runs.
-   ! Avoid carrying eleven additional full-domain rasters in normal Mode 2.
+   ! Detailed CFFDRS/FBP diagnostics are only needed for explicit debug/regression
+   ! runs.  Avoid carrying eleven additional full-domain rasters in normal Mode 2.
    IF (SURFACE_MODEL_CFFDRS .AND. DUMP_CFFDRS_DEBUG) THEN
       CALL ALLOCATE_EMPTY_RASTER(CFFDRS_ISI_TO_DUMP , R%NCOLS, R%NROWS, 1, R%XLLCORNER, R%YLLCORNER, R%CELLSIZE, R%NODATA_VALUE, 'FLOAT     ')
       CALL ALLOCATE_EMPTY_RASTER(CFFDRS_RSI_TO_DUMP , R%NCOLS, R%NROWS, 1, R%XLLCORNER, R%YLLCORNER, R%CELLSIZE, R%NODATA_VALUE, 'FLOAT     ')
